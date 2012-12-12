@@ -49,18 +49,20 @@ public class ScanContact extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 //		autoFocusHandler = new Handler();
+		Log.d("cameras", new Integer(Camera.getNumberOfCameras()).toString());
 		camera = getCameraInstance();
 //		Toast.makeText(getApplicationContext(), Camera.getNumberOfCameras(), Toast.LENGTH_LONG).show();
-		Log.d("cameras", new Integer(Camera.getNumberOfCameras()).toString());
 		
 		scanner = new ImageScanner();
 		scanner.setConfig(0, Config.X_DENSITY, 3);
 		scanner.setConfig(0, Config.Y_DENSITY, 3);
 		
-		frame = new CameraFrame(this, camera, previewCb, autoFocusCB);
+//		frame = new CameraFrame(this, camera, previewCb, autoFocusCB);
+		frame = new CameraFrame(this, camera, previewCb);
 		FrameLayout preview = (FrameLayout) findViewById(R.id.cameraPreview);
 		preview.addView(frame);
 		
+		Log.d("CameraMode", camera.getParameters().getFocusMode());
 		
         scannedText = (TextView)findViewById(R.id.scanText);
 
@@ -74,7 +76,9 @@ public class ScanContact extends Activity {
                         camera.setPreviewCallback(previewCb);
                         camera.startPreview();
                         previewing = true;
-                        camera.autoFocus(autoFocusCB);
+//                        if (camera.getParameters().getFocusMode().toString() != "fixed") {
+//                        	camera.autoFocus(autoFocusCB);
+//                        }
                     }
                 }
             });
@@ -104,7 +108,7 @@ public class ScanContact extends Activity {
         		}
         	}
         } else if (cameraCount == 1) {
-        	c = Camera.open(1);
+        	c = Camera.open(0);
         } else {
         	Log.d("DBG", "Somehow you don't have a camera");
         }
@@ -128,12 +132,12 @@ public class ScanContact extends Activity {
         }
     }
 
-    private Runnable doAutoFocus = new Runnable() {
+ /*   private Runnable doAutoFocus = new Runnable() {
             public void run() {
                 if (previewing)
                     camera.autoFocus(autoFocusCB);
             }
-        };
+        };*/
 
     PreviewCallback previewCb = new PreviewCallback() {
             public void onPreviewFrame(byte[] data, Camera camera) {
@@ -160,11 +164,11 @@ public class ScanContact extends Activity {
         };
 
     // Mimic continuous auto-focusing
-    AutoFocusCallback autoFocusCB = new AutoFocusCallback() {
+/*    AutoFocusCallback autoFocusCB = new AutoFocusCallback() {
             public void onAutoFocus(boolean success, Camera camera) {
                 autoFocusHandler.postDelayed(doAutoFocus, 1000);
             }
-        };
+        };*/
 	
         
 
